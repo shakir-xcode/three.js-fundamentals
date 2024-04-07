@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { materialAlphaTest } from 'three/examples/jsm/nodes/Nodes.js';
 
 /**
  * Sizes
@@ -12,6 +13,8 @@ const sizes = {
 
 // Textures
 const textureLoader = new THREE.TextureLoader()
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+
 const doorColorTexture = textureLoader.load('/textures/door/color.jpg');
 const doorAlphaTexture = textureLoader.load('/textures/door/alpha.jpg');
 const doorAmbientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg');
@@ -23,6 +26,15 @@ const matcapTextures = textureLoader.load('/textures/matcaps/3.png');
 const gradientTextures = textureLoader.load('/textures/gradients/3.jpg');
 
 
+const environmentMapTexture = cubeTextureLoader.load([
+    '/textures/environmentMaps/0/px.jpg',
+    '/textures/environmentMaps/0/nx.jpg',
+    '/textures/environmentMaps/0/py.jpg',
+    '/textures/environmentMaps/0/ny.jpg',
+    '/textures/environmentMaps/0/pz.jpg',
+    '/textures/environmentMaps/0/nz.jpg',
+
+])
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -49,8 +61,37 @@ const scene = new THREE.Scene()
 // const material = new THREE.MeshMatcapMaterial()
 // material.matcap = matcapTextures;
 
-const material = new THREE.MeshDepthMaterial()
+// const material = new THREE.MeshDepthMaterial()
 
+//material that reacts to light
+// const material = new THREE.MeshLambertMaterial();
+
+// const material = new THREE.MeshPhongMaterial();
+// material.shininess = 1000;
+// material.specular = new THREE.Color(0xff0000);
+
+// const material = new THREE.MeshToonMaterial();
+
+// const material = new THREE.MeshStandardMaterial();
+// // material.shininess = 1000;
+// material.metalness = 0;
+// material.roughness = 1;
+// material.map = doorColorTexture;
+// material.aoMap = doorAmbientOcclusionTexture;
+// material.aoMapIntensity = 1;
+// material.displacementMap = doorHeightTexture;
+// material.displacementScale = 0.05;
+// material.metalnessMap = doorMetalnessTexture;
+// material.roughnessMap = doorRoughnessTexture
+// material.normalMap = doorNormalTexture;
+// material.normalScale.set(0.5, 0.5)
+// material.transparent = true;
+// material.alphaMap = doorAlphaTexture;
+
+const material = new THREE.MeshStandardMaterial();
+material.metalness = 1;
+material.roughness = 0;
+material.envMap = environmentMapTexture;
 
 const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 16, 16),
@@ -71,6 +112,17 @@ const torus = new THREE.Mesh(
 )
 scene.add(torus)
 torus.position.x = 1.2;
+
+
+// Lights
+const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0xffffff, 1);
+pointLight.position.x = 2;
+pointLight.position.y = 3;
+pointLight.position.z = 4;
+scene.add(pointLight);
 
 
 /**
